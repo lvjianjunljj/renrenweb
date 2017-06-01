@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+	<!-- 声明事务管理器 -->
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+	</bean>
+
+	<!-- 定义事务通知 -->
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<!-- 对get/load/search开头的方法要求只读事务 -->
+			<tx:method name="get*" propagation="SUPPORTS" read-only="true" />
+			<tx:method name="load*" propagation="SUPPORTS" read-only="true" />
+			<tx:method name="search*" propagation="SUPPORTS" read-only="true" />
+			<!-- 对其它方法要求事务 -->
+			<tx:method name="*" propagation="REQUIRED" />
+		</tx:attributes>
+	</tx:advice>
+
+	<!--定义切面，并将事务通知和切面组合（定义哪些方法应用事务规则） -->
+	<aop:config>
+		<!-- 定义一个事务切面，对com.store.service包下的所有类的所有方法 都应用事务规则 -->
+		<aop:pointcut id="serviceMethods" expression="execution(* com.service.*.*(..))" />
+		<!-- 织入 -->
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="serviceMethods" />
+	</aop:config>
+
+	
+	
+	
+	<!-- SessionFactory配置 	引入式整合-->
+	<!-- 后面有按名称装配的东西，所以此处的id不会乱写,class写spring整合的本地sessionfactory的bean 
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">-->
+		<!-- 配置文件属性注入 
+		<property name="configLocation" value="classpath:hibernate.cfg.xml"></property>
+	</bean>
+	-->
+	<!-- SessionFactory配置 	独立式整合-->
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<!--1、 描述数据库连接的信息配成spring的datasource -->
+		<property name="dataSource" ref="dataSource"></property>
+		<!-- 2、将可选配置改为本地属性,必须加上前缀，不然无效-->
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.format_sql">true</prop>
+			</props>
+		</property>
+		<!-- 3、资源注册（第一种格式）
+		
+		<property name="mappingResources">
+			<list>
+				<value>com/domain/User.hbm.xml</value>
+			</list>
+		</property>
+		 -->
+		<!--  第二种格式：设置映射目录路径（支持子路径的遍历）
+		<property name="mappingDirectoryLocations">
+			<list>
+				<value>classpath:com/domain</value>
+			</list>
+		</property>
+		-->
+		<!-- 设置映射文件的路径（只需要配置一个value，其中写通配格式） -->
+		<property name="mappingLocations">
+			<value>classpath:com/**/*.hbm.xml</value>
+		</property>
+		
+		<!-- 4、二级缓存（通常配置到hbm.cml中）-->
+		
+	</bean>
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+		<property name="url" value="jdbc:mysql://localhost:3306/mywork"></property>
+		<property name="username" value="root"></property>
+		<property name="password" value="123456"></property>
+	</bean>
+	
+</beans>
+

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+    <constant name="struts.devMode" value="true" />
+    <package name="default" namespace="/" extends="struts-default">
+    	<action name="userAction" class="userAction" method="login">
+    		<result name="administrator" >/administrator.jsp</result>
+    		<result name="user" >/user.jsp</result>
+    		<result name="error" >/login.jsp</result>
+    	</action>
+    	
+    	<action name="registerAction" class="userAction" method="register">
+    		<result name="success" >/registerSuccess.jsp</result>
+    	</action>
+    	
+    	<action name="loginVerifyAction" class="userAction" method="loginVerify">
+		</action>
+		
+		<action name="getallusersAction" class="userAction" method="getallusers">
+		</action>
+		
+		<action name="inqueryAction" class="userAction" method="inquery">
+			<result name="success" >/user.jsp</result>
+		</action>
+		
+		<action name="getuserinformationAction" class="userAction" method="getuserinformation">
+    	</action>
+		
+		<action name="getalljournalsAction" class="userAction" method="getalljournals">
+    	</action>
+    	
+    	<action name="updateinformationAction" class="userAction" method="updateinformation">
+    	</action>
+    	
+    	<action name="getfriendslistAction" class="userAction" method="getfriendslist">
+    	</action>
+		
+		<action name="journalAction" class="journalAction" method="journal">
+    	</action>
+    	
+    	<action name="deletejournalAction" class="journalAction" method="deletejournal">
+    	</action>
+    	
+    	<action name="addjournalAction" class="journalAction" method="addjournal">
+    	</action>
+    	
+    	<action name="updatejournalAction" class="journalAction" method="updatejournal">
+    	</action>
+    	
+    </package>
+</struts>

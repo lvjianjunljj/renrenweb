@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+	<!-- 与业务相关的配置文件 -->
+	
+	
+	<!-- 表现层的Bean -->
+	<bean id="journalAction" class="com.action.JournalAction" scope="prototype">
+		<property name="journalService" ref="journalService"></property>
+		<property name="userService" ref="userService"></property>
+	</bean>
+	
+	<!-- 业务逻辑层的Bean -->
+	<bean id="journalService" class="com.service.JournalService">
+	<!-- 这里的property的name属性值为UserService的内部类名称 -->
+		<property name="journalDAO" ref="journalDAO"></property>
+	</bean>
+	
+	<!-- 数据层Bean -->
+	<bean id="journalDAO" class="com.dao.JournalDAO">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	
+	
+</beans>
+
